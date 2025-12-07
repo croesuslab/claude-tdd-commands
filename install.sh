@@ -1,13 +1,13 @@
 #!/bin/bash
 #
 # Claude TDD Commands Installer
-# Usage: curl -fsSL https://raw.githubusercontent.com/USER/claude-tdd-commands/main/install.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/mxdumas/claude-tdd-commands/master/install.sh | bash
 #
 
 set -e
 
 REPO_URL="https://github.com/mxdumas/claude-tdd-commands"
-BRANCH="main"
+BRANCH="master"
 TARGET_DIR=".claude/commands/tdd"
 
 echo "Installing Claude TDD Commands..."

@@ -1,12 +1,12 @@
 #
 # Claude TDD Commands Installer for Windows
-# Usage: irm https://raw.githubusercontent.com/mxdumas/claude-tdd-commands/main/install.ps1 | iex
+# Usage: irm https://raw.githubusercontent.com/mxdumas/claude-tdd-commands/master/install.ps1 | iex
 #
 
 $ErrorActionPreference = "Stop"
 
 $RepoUrl = "https://github.com/mxdumas/claude-tdd-commands"
-$Branch = "main"
+$Branch = "master"
 $TargetDir = ".claude\commands\tdd"
 
 Write-Host "Installing Claude TDD Commands..." -ForegroundColor Cyan
