@@ -1,12 +1,12 @@
 #!/bin/bash
 #
 # Claude TDD Commands Installer
-# Usage: curl -fsSL https://raw.githubusercontent.com/mxdumas/claude-tdd-commands/master/install.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/croesuslab/claude-tdd-commands/master/install.sh | bash
 #
 
 set -e
 
-REPO_URL="https://github.com/mxdumas/claude-tdd-commands"
+REPO_URL="https://github.com/croesuslab/claude-tdd-commands"
 BRANCH="master"
 TARGET_DIR=".claude/commands/tdd"
 
@@ -37,7 +37,7 @@ if command -v git &> /dev/null; then
     rm -rf "$TEMP_DIR"
 else
     # Fallback: download files individually with curl
-    BASE_URL="https://raw.githubusercontent.com/mxdumas/claude-tdd-commands/$BRANCH/commands/tdd"
+    BASE_URL="https://raw.githubusercontent.com/croesuslab/claude-tdd-commands/$BRANCH/commands/tdd"
 
     mkdir -p "$TARGET_DIR/init"
     mkdir -p "$TARGET_DIR/flow"

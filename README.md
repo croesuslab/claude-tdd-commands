@@ -7,13 +7,13 @@ Commandes Claude Code pour un workflow Test-Driven Development structuré.
 ### Linux / macOS
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mxdumas/claude-tdd-commands/master/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/croesuslab/claude-tdd-commands/master/install.sh | bash
 ```
 
 ### Windows (PowerShell)
 
 ```powershell
-irm https://raw.githubusercontent.com/mxdumas/claude-tdd-commands/master/install.ps1 | iex
+irm https://raw.githubusercontent.com/croesuslab/claude-tdd-commands/master/install.ps1 | iex
 ```
 
 ### Manuel

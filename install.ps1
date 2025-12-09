@@ -1,11 +1,11 @@
 #
 # Claude TDD Commands Installer for Windows
-# Usage: irm https://raw.githubusercontent.com/mxdumas/claude-tdd-commands/master/install.ps1 | iex
+# Usage: irm https://raw.githubusercontent.com/croesuslab/claude-tdd-commands/master/install.ps1 | iex
 #
 
 $ErrorActionPreference = "Stop"
 
-$RepoUrl = "https://github.com/mxdumas/claude-tdd-commands"
+$RepoUrl = "https://github.com/croesuslab/claude-tdd-commands"
 $Branch = "master"
 $TargetDir = ".claude\commands\tdd"
 
@@ -25,7 +25,7 @@ if (-not $isProject) {
 New-Item -ItemType Directory -Force -Path "$TargetDir\init" | Out-Null
 New-Item -ItemType Directory -Force -Path "$TargetDir\flow" | Out-Null
 
-$BaseUrl = "https://raw.githubusercontent.com/mxdumas/claude-tdd-commands/$Branch/commands/tdd"
+$BaseUrl = "https://raw.githubusercontent.com/croesuslab/claude-tdd-commands/$Branch/commands/tdd"
 
 # Download function
 function Download-File {
