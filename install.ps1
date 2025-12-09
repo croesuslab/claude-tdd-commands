@@ -12,12 +12,23 @@ $TargetDir = ".claude\commands\tdd"
 Write-Host "Installing Claude TDD Commands..." -ForegroundColor Cyan
 
 # Check if we're in a project directory
-$isProject = (Test-Path ".git") -or (Test-Path "package.json") -or (Test-Path "*.csproj") -or (Test-Path "pyproject.toml")
+$isProject = (Test-Path ".git") -or (Test-Path "package.json") -or (Test-Path "*.csproj") -or `
+             (Test-Path "*.sln") -or (Test-Path "pyproject.toml") -or (Test-Path "Cargo.toml") -or `
+             (Test-Path "go.mod") -or (Test-Path "pom.xml")
+
 if (-not $isProject) {
-    $response = Read-Host "Warning: This doesn't look like a project root. Continue anyway? (y/N)"
-    if ($response -ne "y" -and $response -ne "Y") {
-        Write-Host "Aborted." -ForegroundColor Yellow
-        exit 1
+    # Check if running interactively
+    $isInteractive = [Environment]::UserInteractive -and -not [Console]::IsInputRedirected
+    if ($isInteractive) {
+        $response = Read-Host "Warning: This doesn't look like a project root. Continue anyway? (y/N)"
+        if ($response -ne "y" -and $response -ne "Y") {
+            Write-Host "Aborted." -ForegroundColor Yellow
+            exit 1
+        }
+    } else {
+        # Non-interactive (piped), show warning but continue
+        Write-Host "Warning: This doesn't look like a project root (no .git, package.json, etc.)" -ForegroundColor Yellow
+        Write-Host "Installing anyway..." -ForegroundColor Yellow
     }
 }
 
@@ -48,6 +59,7 @@ Download-File "$BaseUrl/init/4-readme.md" "$TargetDir\init\4-readme.md"
 Write-Host "Downloading flow commands..."
 Download-File "$BaseUrl/flow/status.md" "$TargetDir\flow\status.md"
 Download-File "$BaseUrl/flow/next.md" "$TargetDir\flow\next.md"
+Download-File "$BaseUrl/flow/quickfix.md" "$TargetDir\flow\quickfix.md"
 Download-File "$BaseUrl/flow/1-analyze.md" "$TargetDir\flow\1-analyze.md"
 Download-File "$BaseUrl/flow/2-test.md" "$TargetDir\flow\2-test.md"
 Download-File "$BaseUrl/flow/3-dev.md" "$TargetDir\flow\3-dev.md"
@@ -69,6 +81,7 @@ Write-Host "  /tdd:init:4-readme       - Generate README"
 Write-Host ""
 Write-Host "  /tdd:flow:status         - Show current status"
 Write-Host "  /tdd:flow:next           - Run next step"
+Write-Host "  /tdd:flow:quickfix       - Quick fix (worktree)"
 Write-Host "  /tdd:flow:1-analyze      - Analyze task"
 Write-Host "  /tdd:flow:2-test         - Write tests (RED)"
 Write-Host "  /tdd:flow:3-dev          - Implement (GREEN)"

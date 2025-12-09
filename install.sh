@@ -13,12 +13,24 @@ TARGET_DIR=".claude/commands/tdd"
 echo "Installing Claude TDD Commands..."
 
 # Check if we're in a project directory
-if [ ! -d ".git" ] && [ ! -f "package.json" ] && [ ! -f "*.csproj" ] && [ ! -f "pyproject.toml" ]; then
-    echo "Warning: This doesn't look like a project root. Continue anyway? (y/N)"
-    read -r response
-    if [ "$response" != "y" ] && [ "$response" != "Y" ]; then
-        echo "Aborted."
-        exit 1
+is_project_root() {
+    [ -d ".git" ] || [ -f "package.json" ] || [ -f "Cargo.toml" ] || [ -f "pyproject.toml" ] || \
+    ls *.csproj >/dev/null 2>&1 || ls *.sln >/dev/null 2>&1 || [ -f "go.mod" ] || [ -f "pom.xml" ]
+}
+
+if ! is_project_root; then
+    # Check if running interactively (stdin is a terminal)
+    if [ -t 0 ]; then
+        echo "Warning: This doesn't look like a project root. Continue anyway? (y/N)"
+        read -r response
+        if [ "$response" != "y" ] && [ "$response" != "Y" ]; then
+            echo "Aborted."
+            exit 1
+        fi
+    else
+        # Non-interactive (piped), show warning but continue
+        echo "Warning: This doesn't look like a project root (no .git, package.json, etc.)"
+        echo "Installing anyway..."
     fi
 fi
 
@@ -51,6 +63,7 @@ else
     # Download flow commands
     curl -fsSL "$BASE_URL/flow/status.md" -o "$TARGET_DIR/flow/status.md"
     curl -fsSL "$BASE_URL/flow/next.md" -o "$TARGET_DIR/flow/next.md"
+    curl -fsSL "$BASE_URL/flow/quickfix.md" -o "$TARGET_DIR/flow/quickfix.md"
     curl -fsSL "$BASE_URL/flow/1-analyze.md" -o "$TARGET_DIR/flow/1-analyze.md"
     curl -fsSL "$BASE_URL/flow/2-test.md" -o "$TARGET_DIR/flow/2-test.md"
     curl -fsSL "$BASE_URL/flow/3-dev.md" -o "$TARGET_DIR/flow/3-dev.md"
@@ -73,6 +86,7 @@ echo "  /tdd:init:4-readme     - Generate README"
 echo ""
 echo "  /tdd:flow:status       - Show current status"
 echo "  /tdd:flow:next         - Run next step"
+echo "  /tdd:flow:quickfix     - Quick fix (worktree)"
 echo "  /tdd:flow:1-analyze    - Analyze task"
 echo "  /tdd:flow:2-test       - Write tests (RED)"
 echo "  /tdd:flow:3-dev        - Implement (GREEN)"
