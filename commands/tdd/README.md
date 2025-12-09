@@ -83,7 +83,34 @@ docs/
 }
 ```
 
+## Quickfix (`/tdd:quickfix`)
+
+Pour les corrections rapides qui ne nécessitent pas le processus TDD complet.
+
+```bash
+# Setup worktree (une seule fois)
+git worktree add ../spotlight-quickfix -b quickfix
+
+# Dans le worktree, lancer la commande
+/tdd:flow:quickfix "fix typo in error message"
+```
+
+**Principe:** Une branche `quickfix` persistante qui accumule les commits. Une seule PR vers la branche courante (epic1, epic2, etc.).
+
+**Quand utiliser:**
+- Changements < 20 lignes
+- Corrections évidentes (typos, imports, null checks)
+- Pas de nouvelle fonctionnalité
+
+**Workflow:**
+- Fenêtre 1 (`spotlight`) → TDD normal
+- Fenêtre 2 (`spotlight-quickfix`) → `/tdd:quickfix`
+- Merger la PR quand prêt → `git pull` dans fenêtre 1
+
+Voir `/tdd:quickfix` pour les détails.
+
 ## Raccourcis
 
 - `/tdd:flow:status` - Où en suis-je ?
 - `/tdd:flow:next` - Continue automatiquement
+- `/tdd:flow:quickfix "desc"` - Correction rapide (worktree)

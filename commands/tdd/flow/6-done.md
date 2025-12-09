@@ -1,92 +1,244 @@
-# Commande: /done
+# /tdd:flow:6-done
 
-Commit les changements et crée une PR si l'épique est terminée.
+Finalise la tâche : vérification, commit, cleanup, et PR si epic terminé.
 
 ## Instructions
 
-1. **Charger l'état** : Lis `docs/state.json`
+### 1. Charger le contexte
 
-2. **Vérifier qu'on peut commiter** :
-   - `current.phase` doit être `"docs"`
-   - Si `"review"` → suggérer `/docs`
-   - Si autre → suggérer la bonne commande
+1. **État** : Lis `docs/state.json`
+2. **Vérifier la phase** :
+   - Si `current.phase` != "docs" → afficher erreur
+   - Si `"review"` → suggérer `/tdd:flow:5-docs`
+3. **Charger** `docs/current-task.md` et le fichier epic
 
-3. **Vérifier qu'il y a des changements** :
-   ```bash
-   git status
-   ```
-   - Si rien à commiter → afficher message et sortir
+### 2. Vérification finale
 
-4. **Identifier la tâche courante** :
-   - Lire `current.task` de `state.json`
-   - Charger `docs/current-task.md` et le fichier epic pour la description
+#### A. Build et tests
 
-5. **Créer le commit** :
-   ```bash
-   git add -A
-   ```
-
-   Format du message :
-   ```
-   E{N}: T{M} - {description}
-
-   - Point 1 des changements
-   - Point 2 des changements
-
-   🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-   Co-Authored-By: Claude <noreply@anthropic.com>
-   ```
-
-6. **Vérifier si l'épique est complète** :
-   - Lire le fichier epic pour compter les tâches totales
-   - Comparer avec `epics[E0].completed`
-   - Si toutes complétées → epic terminé
-
-7. **Finaliser la tâche** :
-   - Ajouter `current.task` à `epics[current.epic].completed`
-   - Remettre `current.task` et `current.phase` à `null`
-   - Supprimer `docs/current-task.md`
-
-8. **Si l'épique est terminée** :
-   - Mettre à jour `state.json` : `epics[E0].status` = "completed"
-   - Passer `current.epic` au prochain epic
-   - Créer une PR :
-     ```bash
-     gh pr create --title "Epic E{N}: {nom}" --body "..."
-     ```
-
-9. **Afficher le résultat** :
-
-   Si commit seul :
-   ```
-   ## ✓ Commit créé
-
-   **Tâche:** E0-T3 - Titre
-   **Commit:** abc1234
-
-   **Progression E0:** 3/8 tâches
-
-   Prochaine étape: `/analyze` pour la tâche suivante
-   ```
-
-   Si epic terminé + PR :
-   ```
-   ## ✓ Epic E0 terminée - PR créée
-
-   **Tâches complétées:** T1, T2, T3...
-   **Commit:** abc1234
-   **PR:** #123 - https://github.com/...
-
-   Prochaine étape: Merge la PR puis `/analyze` pour le prochain epic
-   ```
-
-## Flow TDD complet
+```bash
+dotnet build && dotnet test
 ```
-/analyze → /test (RED) → /dev (GREEN) → /review (VALIDATE) → /docs → /done
+
+**Si échec → ne pas commiter.** Corriger d'abord.
+
+#### B. Checklist de complétion
+
+Vérifier que tout est fait :
+
+| Vérifié | Élément |
+|---------|---------|
+| | Tests écrits et passent |
+| | Code implémenté et propre |
+| | Documentation API à jour (si applicable) |
+| | CHANGELOG mis à jour |
+| | Pas de TODO/FIXME laissés dans le code |
+| | Pas de code commenté |
+| | Pas de fichiers temporaires |
+
+#### C. Vérifier les changements
+
+```bash
+git status
+git diff --stat
+```
+
+- Si rien à commiter → afficher message et sortir
+- Vérifier qu'il n'y a pas de fichiers inattendus
+
+### 3. Cleanup AVANT le commit
+
+**Important :** Faire le cleanup avant de commiter pour tout inclure dans le même commit.
+
+#### A. Mettre à jour state.json
+
+```json
+{
+  "current": {
+    "epic": "E1",
+    "task": null,
+    "phase": null
+  },
+  "epics": {
+    "E1": {
+      "status": "in_progress",
+      "completed": ["T1", "T2", "T3", "T4"]  // Ajouter la tâche
+    }
+  }
+}
+```
+
+#### B. Nettoyer current-task.md
+
+Remplacer le contenu par :
+```markdown
+# Current Task
+
+No task in progress.
+
+Run `/tdd:flow:1-analyze` to start the next task.
+```
+
+### 4. Créer le commit
+
+```bash
+git add -A
+```
+
+#### Message de commit
+
+Format :
+```
+E{N}: T{M} - {description courte}
+
+{Description des changements principaux}
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+**Exemple :**
+```
+E1: T4 - MVR Import with 3D positions
+
+- Add MvrImporter class for parsing MVR files
+- Extract fixtures with positions and DMX addresses
+- Import embedded GDTF files automatically
+- Add ImportResult/ImportWarning for error handling
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+**Règles du message :**
+- Première ligne : identifiant + description concise (< 72 chars)
+- Corps : liste des changements significatifs (pas les détails)
+- Pas de "Added", "Fixed" - c'est dans le CHANGELOG
+- Le cleanup de state.json/current-task.md est inclus silencieusement (pas dans le message)
+
+### 5. Vérifier si l'epic est complète
+
+Comparer `epics[E{N}].completed` avec la liste des tâches dans le fichier epic.
+
+**Si toutes les tâches sont complétées :**
+1. Mettre `epics[E{N}].status` = "completed"
+2. Passer `current.epic` au prochain epic
+3. Créer une PR (si remote configuré)
+
+### 6. Créer la PR (si epic terminé)
+
+```bash
+gh pr create --title "Epic E{N}: {nom}" --body "$(cat <<'EOF'
+## Summary
+
+{Description de ce que l'epic accomplit}
+
+## Tasks completed
+
+- [x] T1 - {description}
+- [x] T2 - {description}
+...
+
+## Changes
+
+- {Changement majeur 1}
+- {Changement majeur 2}
+
+## Test plan
+
+- [ ] `dotnet build` passes
+- [ ] `dotnet test` passes
+- [ ] {Test manuel si applicable}
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+EOF
+)"
+```
+
+### 7. Rapport final
+
+#### Commit seul (tâche terminée, epic en cours)
+
+```
+## ✓ Commit créé
+
+**Tâche:** E1-T4 - MVR Import
+**Commit:** abc1234
+
+**Fichiers:**
+- 3 créés
+- 2 modifiés
+- 1 supprimé
+
+**Progression E1:** 4/10 tâches
+
+Prochaine étape: `/tdd:flow:1-analyze` pour T5
+```
+
+#### Epic terminé + PR
+
+```
+## ✓ Epic E1 terminée
+
+**Tâches complétées:** T1, T2, T3, T4, T5, T6, T7, T8, T9, T10
+**Commits:** 10
+**PR:** #42 - https://github.com/user/repo/pull/42
+
+**Prochain epic:** E2 - DMX Output
+
+Prochaine étape: Review/merge la PR, puis `/tdd:flow:1-analyze`
+```
+
+## Vérifications automatiques
+
+Avant de commiter, vérifier automatiquement :
+
+```bash
+# Pas de markers de conflit
+git diff --check
+
+# Pas de fichiers binaires inattendus
+git diff --cached --name-only | grep -E '\.(exe|dll|bin|obj)$'
+
+# Pas de secrets potentiels
+git diff --cached | grep -iE '(password|secret|api_key|token)\s*='
+```
+
+## Si quelque chose ne va pas
+
+### Tests qui échouent
+```
+## Erreur: Tests en échec
+
+X tests échouent. Impossible de commiter.
+
+Lancer `dotnet test` pour voir les détails, puis corriger.
+```
+
+### Fichiers inattendus
+```
+## Attention: Fichiers inattendus
+
+Les fichiers suivants seront commités:
+- bin/Debug/...
+- .vs/...
+
+Voulez-vous les exclure ? (Ils devraient être dans .gitignore)
+```
+
+### Pas de changements
+```
+## Info: Rien à commiter
+
+Aucun changement détecté. La tâche est peut-être déjà commitée ?
+
+État actuel: E1-T4 en phase "docs"
 ```
 
 ## Notes
-- Ne JAMAIS push sans créer de PR
+
+- Ne JAMAIS push directement sur main/master
 - Les commits restent locaux jusqu'au merge de la PR
 - Si pas de remote configuré, créer uniquement le commit local

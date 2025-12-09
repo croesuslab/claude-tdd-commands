@@ -1,155 +1,163 @@
-# Commande: /analyze
+# /tdd:flow:1-analyze
 
-Analyse le projet et prépare le plan détaillé de la prochaine tâche (approche TDD).
+Analyse interactive pour préparer la prochaine tâche TDD.
 
 ## Instructions
 
 ### 1. Charger l'état
-Lis `docs/state.json`
+Lis `docs/state.json`. Si `current.phase` != `null` → erreur, suggérer la bonne commande.
 
-### 2. Vérifier la phase
-- Si `current.phase` n'est pas `null` → afficher erreur, on est déjà en cours de tâche
-- Suggérer la commande appropriée (`/test`, `/dev`, `/review`)
+### 2. Déterminer la tâche
+- Prochaine tâche non complétée dans `current.epic`
+- Si epic complété → passer au prochain
 
-### 3. Déterminer la tâche
-- Prendre `current.epic` (ex: "E1")
-- Trouver la prochaine tâche non complétée (T1, T2, ... pas dans `epics[E1].completed`)
-- Si epic complété → passer au prochain epic
+### 3. Explorer le contexte
 
-### 4. Charger le contexte (en parallèle)
-- `docs/dev/architecture.md`
-- `docs/dev/standards.md`
-- Le fichier epic (ex: `docs/epics/E1-mvr-import.md`)
-- Code existant pertinent dans `src/`
-- Fichiers samples disponibles si pertinents
+**Charger en parallèle :**
+- `docs/dev/architecture.md`, `docs/dev/standards.md`
+- Fichier epic (ex: `docs/epics/E1-mvr-import.md`)
 
-### 5. Poser des questions de clarification (NOUVEAU)
+**Explorer le code :**
+- Fichiers/classes qui seront impactés
+- Patterns déjà utilisés dans le projet
+- Tests existants similaires
+- Samples (`docs/samples/`, `tests/*/TestData/`)
+- ADRs pertinents (`docs/dev/decisions/`)
 
-Utiliser `AskUserQuestion` pour poser 2-4 questions adaptées au contexte de la tâche.
+### 4. Analyse silencieuse
 
-**Questions types à considérer :**
+Avant de parler, identifier :
+1. **Impact** - Quels fichiers/modules seront touchés ?
+2. **Dépendances** - De quoi dépend cette tâche ? Qu'est-ce qui en dépendra ?
+3. **Risques** - Points de complexité ou d'incertitude
+4. **Edge cases** - Cas limites à considérer
 
-| Catégorie | Question exemple |
-|-----------|------------------|
-| **Scope** | Quel niveau de couverture ? (minimal / standard / exhaustif) |
-| **Samples** | As-tu des fichiers de test disponibles ? Où ? |
-| **Priorités** | Quel aspect privilégier ? (performance / lisibilité / extensibilité) |
-| **Intégration** | Comment cette fonctionnalité sera-t-elle utilisée ? |
-| **Contraintes** | Y a-t-il des dépendances ou limitations techniques ? |
-| **Ambiguïtés** | Clarifier tout point flou dans la spec de la tâche |
+### 5. Présenter l'analyse
 
-**Règles :**
-- Adapter les questions au contexte spécifique (pas de questions génériques)
-- Maximum 4 questions pour ne pas surcharger
-- Si la tâche est simple et claire, poser moins de questions
-- Intégrer les réponses dans le plan
+```
+## Analyse: [E1] T4 - Titre
 
-### 6. Mettre à jour state.json
-```json
-{
-  "current": {
-    "epic": "E1",
-    "task": "T4",
-    "phase": "analyze"
-  }
-}
+### Ce que j'ai compris
+[Résumé de la tâche et son contexte]
+
+### Impact identifié
+- Fichiers à créer: X
+- Fichiers à modifier: Y
+- Dépendances: Z
+
+### Points d'attention
+1. [Point technique ou architectural notable]
+2. [Risque ou complexité identifiée]
+3. [Ambiguïté dans la spec]
+
+### Questions ouvertes
+[Liste des questions]
 ```
 
-### 7. Écrire `docs/current-task.md`
+### 6. Discussion interactive
+
+Engager une **conversation naturelle** pour clarifier.
+
+**Types de questions :**
+
+| Catégorie | Exemple |
+|-----------|---------|
+| Clarification | "La spec mentionne X, mais le code fait Y. Quelle approche ?" |
+| Architecture | "Deux façons : A (simple) ou B (extensible). Préférence ?" |
+| Scope | "Tout faire maintenant ou commencer par le minimum ?" |
+| Edge cases | "Que doit-il se passer si [cas limite] ?" |
+| Données | "As-tu des fichiers de test spécifiques ?" |
+
+**Règles :**
+- Questions **ouvertes** (pas oui/non)
+- **Itérer** sur les réponses
+- **Challenger** les hypothèses si nécessaire
+- Continuer jusqu'à compréhension claire du scope, des décisions, des priorités
+
+### 7. Synthèse des décisions
+
+```
+## Décisions finales
+
+### Scope
+- [Ce qui est inclus]
+- [Ce qui est exclu]
+
+### Architecture
+- [Choix techniques retenus]
+
+### Cas limites
+- [Comment les gérer]
+```
+
+Demander confirmation avant de continuer.
+
+### 8. Mettre à jour state.json
+
+```json
+{ "current": { "epic": "E1", "task": "T4", "phase": "analyze" } }
+```
+
+### 9. Écrire `docs/current-task.md`
 
 ```markdown
-# [E1] T4 - Titre de la tâche
+# [E1] T4 - Titre
 
 ## Objectif
-Description claire de ce qui doit être fait.
+[Description claire]
 
-## Décisions (basées sur les réponses)
-- Scope: Standard - fixtures + positions + GDTF embarqués
-- GDTF: Charger directement dans le show
-- ...
+## Décisions
+[Résumé des décisions de la discussion]
+
+## Contexte technique
+
+### Code existant pertinent
+- `path/to/file.cs` - Description
+
+### Patterns à suivre
+- [Pattern identifié]
 
 ## Fichiers
 
 ### Tests à créer
-- `tests/Spotlight.Core.Tests/Import/MvrImporterTests.cs`
+- `tests/Spotlight.Core.Tests/...`
 
 ### Code à créer
-- `src/Spotlight.Core/Import/MvrImporter.cs`
+- `src/Spotlight.Core/...`
 
 ### À modifier
-- (aucun)
-
-### À supprimer
-- (aucun)
+- (liste ou "aucun")
 
 ## Tests (RED)
-
-Spécifications des tests à écrire.
-
-### MvrImporterTests.cs
-```csharp
-namespace Spotlight.Core.Tests.Import;
-
-public class MvrImporterTests
-{
-    [Fact]
-    public void Import_ValidMvr_ReturnsShow()
-    {
-        // Vérifie que l'import retourne un Show valide
-    }
-}
-```
+[Specs des tests]
 
 ## Implémentation (GREEN)
-
-Code minimal pour faire passer les tests.
-
-### MvrImporter.cs
-```csharp
-namespace Spotlight.Core.Import;
-
-public class MvrImporter
-{
-    public Show Import(string filePath) { ... }
-}
-```
-
-## Commandes
-```bash
-dotnet test --filter "MvrImporter"
-```
+[Approche et structure du code]
 
 ## Notes
-- Points d'attention particuliers
+- Points d'attention
+- Risques identifiés
 ```
 
-### 8. Mettre à jour phase
-`current.phase` = "test"
+### 10. Finaliser
 
-### 9. Afficher le résumé
+Mettre `current.phase` = "test".
 
 ```
-## Prête: [E1] T4 - Parser MVR
+## Prête: [E1] T4 - Titre
 
-**Décisions:**
-- Scope: Standard
-- GDTF: Charger dans le show
+**Scope:** [Résumé en 1 ligne]
+**Décisions clés:** [Liste]
+**Tests prévus:** X tests
+**Code prévu:** Y fichiers
 
-**Tests prévus:** 8 tests dans 1 fichier
-**Code prévu:** 1 fichier à créer
-
-Plan écrit dans `docs/current-task.md`
-
-Lancer `/test` pour écrire les tests (RED).
+Lancer `/tdd:flow:2-test` pour écrire les tests (RED).
 ```
 
-## Flow TDD
-```
-/analyze → /test (RED) → /dev (GREEN) → /review → /docs → /done
-    ↑
-  Questions guidées
-```
+## Adapter la profondeur
 
-## Contexte
-- Stack: .NET 10, C# 14, MAUI Blazor Hybrid
-- Samples: `docs/samples/`
+| Tâche simple | Tâche complexe |
+|--------------|----------------|
+| 1-2 questions | Discussion approfondie |
+| Patterns évidents | Exploration des alternatives |
+| Analyse rapide | Analyse détaillée du code |

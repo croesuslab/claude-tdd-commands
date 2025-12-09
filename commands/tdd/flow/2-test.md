@@ -1,121 +1,133 @@
-# Commande: /test
+# /tdd:flow:2-test
 
-Écrit les tests définis dans le plan (phase RED du TDD).
+Écrit des tests significatifs (phase RED).
 
 ## Instructions
 
-1. **Charger l'état** : Lis `docs/state.json`
+### 1. Vérifier
+- `docs/state.json` : `current.phase` doit être "test"
+- Charger `docs/current-task.md`
+- Lire les tests similaires existants pour comprendre les patterns
 
-2. **Vérifier la phase** :
-   - Si `current.phase` != "test" → afficher erreur
-   - Si `null` → suggérer `/analyze`
-   - Si autre → suggérer la bonne commande
+### 2. Réflexion avant d'écrire
 
-3. **Charger le plan** : `docs/current-task.md`
+**Comportement métier :**
+- Quels sont les scénarios d'utilisation réels ?
+- Quelles règles métier doivent être respectées ?
+- Quels invariants ne doivent jamais être violés ?
 
-4. **Créer les fichiers de tests** :
-   - Créer les fichiers listés dans "Tests à créer"
-   - Utiliser le code de la section "Tests (RED)"
-   - Les tests doivent compiler mais ÉCHOUER (pas d'implémentation)
+**Contrat API :**
+- Pré-conditions (ce que l'appelant doit garantir)
+- Post-conditions (ce que le code garantit)
+- Effets de bord
+- Modes d'échec possibles
 
-5. **Assurer la couverture complète** :
+**Edge cases réels :**
+- Cas limites en production
+- Fichiers malformés / données corrompues
+- États incohérents possibles
 
-   ## CHECKLIST OBLIGATOIRE
+### 3. Catégories de tests
 
-   Pour **CHAQUE méthode publique**, cocher tous les cas applicables :
+**Priorité haute :**
+- **Comportement métier** - Ce que fait le code pour l'utilisateur
+- **Contrat API** - Pré/post-conditions, validation
+- **Invariants** - Règles qui ne doivent jamais être violées
 
-   ### ✅ Happy Path
-   - [ ] Cas nominal avec entrées valides
-   - [ ] Chaque paramètre optionnel testé (valeur par défaut + valeur explicite)
-   - [ ] Retour attendu vérifié (type, valeur, propriétés)
+**Priorité moyenne :**
+- **Scénarios réels** - Cas d'utilisation complets
+- **Intégration** - Interactions entre composants
+- **Gestion d'erreurs** - Récupération, messages explicites
 
-   ### ✅ Null / Empty
-   - [ ] Chaque paramètre `string` testé avec `null` → `ArgumentNullException`
-   - [ ] Chaque paramètre `string` testé avec `""` → `ArgumentException` ou comportement défini
-   - [ ] Chaque paramètre objet testé avec `null` → `ArgumentNullException`
-   - [ ] Collections vides testées → comportement défini
+### 4. Nommage
 
-   ### ✅ Valeurs invalides / extrêmes
-   - [ ] IDs/clés inexistants → `null`, exception, ou no-op documenté
-   - [ ] Valeurs hors limites (négatifs, > max, overflow)
-   - [ ] Caractères spéciaux dans les strings (espaces, unicode, chemins invalides)
-   - [ ] Fichiers inexistants → `FileNotFoundException`
+```csharp
+// Bon : Décrit un comportement
+[Fact]
+public void Import_WithMultipleFixtures_GroupsThemByUniverse()
 
-   ### ✅ État inattendu
-   - [ ] Ressource modifiée entre deux appels
-   - [ ] Ressource supprimée entre deux appels
-   - [ ] Appels concurrents (si applicable)
-
-   ### ✅ Exceptions explicites
-   - [ ] Chaque `throw` dans le code a un test correspondant
-   - [ ] Type d'exception vérifié avec `Assert.Throws<T>()`
-   - [ ] Message d'exception vérifié si pertinent (`Assert.Contains()`)
-   - [ ] Paramètres qui évitent l'exception (ex: `overwrite=true`)
-
-   ### Exemple complet
-   ```csharp
-   // === Happy path ===
-   [Fact] public void Add_ValidItem_AddsToCollection() { }
-   [Fact] public void Add_WithOptionalParam_UsesProvidedValue() { }
-
-   // === Null / Empty ===
-   [Fact] public void Add_NullName_ThrowsArgumentNullException() { }
-   [Fact] public void Add_EmptyName_ThrowsArgumentException() { }
-   [Fact] public void Add_NullCollection_ThrowsArgumentNullException() { }
-
-   // === Valeurs invalides ===
-   [Fact] public void Get_NonExistentKey_ReturnsNull() { }
-   [Fact] public void Add_NegativeQuantity_ThrowsArgumentOutOfRangeException() { }
-   [Fact] public void Import_InvalidPath_ThrowsFileNotFoundException() { }
-
-   // === État inattendu ===
-   [Fact] public void Update_ItemDeletedConcurrently_ThrowsInvalidOperationException() { }
-
-   // === Exceptions explicites ===
-   [Fact] public void Add_DuplicateKey_ThrowsInvalidOperationException() { }
-   [Fact] public void Add_DuplicateKey_WithOverwrite_Succeeds() { }
-   ```
-
-6. **Vérifier la compilation** :
-   ```bash
-   dotnet build
-   ```
-   - Si erreur de compilation → corriger les tests
-
-7. **Exécuter les tests** :
-   ```bash
-   dotnet test
-   ```
-   - Les tests doivent ÉCHOUER (RED)
-   - C'est normal et attendu à cette étape
-
-8. **Mettre à jour state.json** : `current.phase` = "dev"
-
-9. **Afficher le résumé** :
-   ```
-   ## RED: [E0] T3 - Titre
-
-   **Tests créés:** 12 tests dans 2 fichiers
-   - Happy path: 5
-   - Edge cases: 4
-   - Exceptions: 3
-
-   **Build:** OK
-   **Tests:** 0/12 passed (RED) ✓
-
-   Les tests échouent comme attendu.
-
-   Lancer `/dev` pour implémenter (GREEN).
-   ```
-
-## Flow TDD
-```
-/analyze → /test (RED) → /dev (GREEN) → /review → /docs → /done
+// Mauvais : Décrit une mécanique
+[Fact]
+public void Import_CallsParser_ThenCreatesFixture()
 ```
 
-## Notes
-- Ne pas implémenter le code métier à cette étape
-- Les tests doivent être complets et vérifier TOUS les comportements
-- Chaque branche du code (if/else, try/catch) doit avoir un test
-- Si un test passe déjà, c'est suspect → vérifier qu'il teste vraiment quelque chose
-- Nommer les tests selon le pattern: `{Method}_{Scenario}_{ExpectedResult}`
+Pattern : `Action_Context_ExpectedResult`
+
+### 5. Structure
+
+```csharp
+[Fact]
+public void Import_WithColorWheel_ExtractsAllSlots()
+{
+    // Arrange - Contexte explicite
+    var path = GetTestFile("fixture-with-wheel.gdtf");
+
+    // Act - Action unique
+    var result = _importer.Import(path);
+
+    // Assert - Vérifications significatives
+    var wheel = result.Wheels.Single(w => w.Type == WheelType.Color);
+    Assert.Equal(8, wheel.Slots.Count);
+    Assert.All(wheel.Slots, slot => Assert.NotEmpty(slot.Name));
+}
+```
+
+### 6. Tests paramétrés
+
+```csharp
+[Theory]
+[InlineData("file.gdtf", "GDTF")]
+[InlineData("file.mvr", "MVR")]
+public void Import_DifferentFormats_SetsCorrectSource(string file, string expected)
+```
+
+### 7. Ce qu'il faut éviter
+
+- `Assert.NotNull(result)` seul (ne teste rien de significatif)
+- Tester l'implémentation interne (mocks qui vérifient les appels)
+- Noms génériques (`Test1`, `Add_Works`)
+- Dépendance à l'ordre des éléments
+
+### 8. Checklist par méthode publique
+
+| Catégorie | Vérifié ? |
+|-----------|-----------|
+| Comportement nominal | |
+| Paramètres null/vide | |
+| Valeurs invalides/extrêmes | |
+| Invariants du domaine | |
+| Cas limites réalistes | |
+| Modes d'erreur | |
+
+### 9. Écrire les tests
+
+Créer les fichiers de `docs/current-task.md`. Les tests doivent **compiler mais ÉCHOUER**.
+
+### 10. Vérifier
+
+```bash
+dotnet build  # Doit passer
+dotnet test   # Doit ÉCHOUER (RED)
+```
+
+### 11. Finaliser
+
+Mettre `current.phase` = "dev".
+
+```
+## RED: [E1] T4 - Titre
+
+**Tests créés:** 18 tests dans 2 fichiers
+
+**Par catégorie:**
+- Comportement: 6
+- Contrat API: 4
+- Invariants: 3
+- Edge cases: 3
+- Erreurs: 2
+
+**Build:** OK
+**Tests:** 0/18 passed (RED) ✓
+
+Lancer `/tdd:flow:3-dev` pour implémenter (GREEN).
+```
