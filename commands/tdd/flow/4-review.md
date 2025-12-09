@@ -8,11 +8,14 @@ Revue critique du code.
 - `docs/state.json` : `current.phase` doit être "review"
 - Charger `docs/current-task.md`, `docs/dev/standards.md`
 
-### 2. Build et tests
+### 2. Qualité et tests
 
-```bash
-dotnet build && dotnet test
-```
+Exécuter les commandes de validation appropriées selon le langage du projet:
+- Linter/formatter
+- Type checking
+- Tests unitaires
+
+Consulter `CLAUDE.md` ou `README.md` pour les commandes exactes du projet.
 
 Si échec → corriger d'abord.
 
@@ -30,12 +33,12 @@ Lire **chaque fichier modifié/créé**.
 
 | Aspect | Question |
 |--------|----------|
-| Responsabilité | Classe/méthode fait une seule chose ? |
+| Responsabilité | Classe/fonction fait une seule chose ? |
 | Couplage | Trop dépendant d'autres modules ? |
 | Testabilité | Facile à tester en isolation ? |
 
 **Signaux d'alerte :**
-- Classe > 200 lignes, méthode > 30 lignes
+- Fichier > 200 lignes, fonction/méthode > 30 lignes
 - Plus de 3 niveaux d'indentation
 - Plus de 4 paramètres
 - Noms génériques (`data`, `manager`, `helper`)
@@ -43,7 +46,7 @@ Lire **chaque fichier modifié/créé**.
 #### C. Robustesse
 
 - Erreurs gérées correctement ?
-- Ressources libérées (IDisposable, using) ?
+- Ressources libérées proprement ?
 - Cas limites couverts ?
 
 ### 4. Revue des tests
@@ -59,17 +62,12 @@ Lire **chaque fichier modifié/créé**.
 | Gestion erreurs | |
 
 **Tests manquants ?**
-- Chaque `if` → test pour chaque branche ?
-- Chaque `throw` → test qui le déclenche ?
+- Chaque branche conditionnelle testée ?
+- Chaque exception/erreur déclenchable par un test ?
 
 ### 5. Conformité standards
 
-| Standard | OK ? |
-|----------|------|
-| File-scoped namespaces | |
-| Records pour modèles | |
-| Nullable (pas de `!`) | |
-| CancellationToken sur async | |
+Vérifier la conformité avec `docs/dev/standards.md` du projet.
 
 ### 6. Corrections
 
@@ -82,9 +80,9 @@ Lire **chaque fichier modifié/créé**.
 Garder `current.phase` = "review".
 
 ```
-## Review: [E1] T4 - Titre
+## Review: [Epic] Task - Titre
 
-**Build:** OK | **Tests:** 18/18 passed
+**Qualité:** ✓ | **Tests:** X passed
 
 **Corrections appliquées:**
 - [Liste]
