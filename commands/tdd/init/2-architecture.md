@@ -1,181 +1,164 @@
-# Commande: /tdd:init:2-architecture
+# /tdd:init:2-architecture
 
-Définir l'architecture technique en se basant sur le contexte du projet.
+Définition interactive de l'architecture technique basée sur une compréhension approfondie du projet.
 
 ## Instructions
 
-### 1. Charger le contexte (si disponible)
+### 1. Charger et analyser le contexte
 
-Vérifier et lire si présents :
+**Explorer silencieusement :**
 - `CLAUDE.md` - Vue d'ensemble, stack, structure
-- `docs/epics/*.md` - Comprendre les fonctionnalités prévues
+- `docs/state.json` - Métadonnées du projet
+- `docs/epics/*.md` - Fonctionnalités prévues
+- Code existant (si présent) - Patterns émergents
 
-**Si `CLAUDE.md` n'existe pas**, poser les questions de base :
+**Si aucun contexte n'existe :**
 ```
-Avant de définir l'architecture, j'ai besoin de quelques infos :
+Avant de définir l'architecture, j'ai besoin de comprendre le projet.
 
-1. Nom du projet ?
-2. Description en 1-2 phrases ?
-3. Stack technique (langage/framework) ?
-4. Type de projet (web, CLI, desktop, API, etc.) ?
-```
-
-Extraire ou collecter :
-- Nom et description du projet
-- Stack technique choisi
-- Type de projet (web, CLI, desktop, etc.)
-- Fonctionnalités principales (depuis les epics ou la conversation)
-
-### 2. Questions ciblées selon le contexte
-
-**Ne pas poser de questions génériques.** Adapter selon le type de projet détecté.
-
-#### Si projet Web Frontend/Full-stack :
-```
-Pour l'architecture de {nom} :
-
-1. State management : Comment gérer l'état de l'app ?
-   ○ Store global (Redux, Zustand, Pinia)
-   ○ Context/Composition API
-   ○ Server state only (React Query, SWR)
-   ○ Minimal (useState local)
-
-2. Routing : Quelle approche ?
-   ○ File-based (Next.js, Nuxt)
-   ○ Config-based (React Router, Vue Router)
-   ○ SPA simple (hash routing)
-
-3. Styling : Quelle approche CSS ?
-   ○ CSS Modules
-   ○ Tailwind
-   ○ CSS-in-JS (styled-components)
-   ○ Plain CSS/SCSS
-
-4. API calls : Comment communiquer avec le backend ?
-   ○ REST (fetch/axios)
-   ○ GraphQL (Apollo, urql)
-   ○ tRPC
-   ○ Pas d'API (static)
+Parle-moi de ce que tu construis :
+- Quel type de projet ? (web, API, CLI, desktop, library)
+- Quel stack technique ?
+- Quelles sont les fonctionnalités principales ?
 ```
 
-#### Si projet Backend/API :
+### 2. Analyse silencieuse
+
+**Avant de parler, identifier :**
+
+1. **Type d'architecture naturel**
+   - Le projet suggère-t-il une architecture spécifique ?
+   - Quels patterns sont idiomatiques pour ce stack ?
+
+2. **Composants probables**
+   - Quels modules/couches seront nécessaires ?
+   - Comment vont-ils interagir ?
+
+3. **Décisions critiques**
+   - Quels choix architecturaux auront le plus d'impact ?
+   - Quelles sont les options pour chaque décision ?
+
+4. **Risques architecturaux**
+   - Où sont les points de couplage ?
+   - Quelles décisions seront difficiles à changer ?
+
+5. **Contraintes détectées**
+   - Performance, scalabilité, sécurité ?
+   - Intégrations externes ?
+
+### 3. Présenter l'analyse
+
 ```
-Pour l'architecture de {nom} :
+## Analyse architecturale: {projet}
 
-1. Pattern API : Quelle structure ?
-   ○ REST classique (controllers/routes)
-   ○ Clean Architecture (use cases, entities)
-   ○ CQRS (commands/queries séparés)
-   ○ Minimal API / Functions
+### Ce que j'ai compris
+- **Type:** {web app / API / CLI / etc.}
+- **Stack:** {stack détecté}
+- **Fonctionnalités clés:** {résumé des epics}
 
-2. Base de données : Quel accès ?
-   ○ ORM (Entity Framework, Prisma, SQLAlchemy)
-   ○ Query builder (Knex, Dapper)
-   ○ Raw SQL
-   ○ NoSQL driver direct
+### Architecture naturelle pour ce type de projet
+[Expliquer quelle architecture est typique/recommandée]
 
-3. Auth : Quelle stratégie ?
-   ○ JWT tokens
-   ○ Sessions
-   ○ OAuth/OIDC externe
-   ○ Pas d'auth pour l'instant
+### Composants que j'identifie
+| Composant | Rôle | Interactions |
+|-----------|------|--------------|
+| {Composant 1} | {rôle} | {avec qui il interagit} |
+| {Composant 2} | {rôle} | {avec qui il interagit} |
 
-4. Validation : Où valider les données ?
-   ○ DTOs avec validation (FluentValidation, Zod)
-   ○ Dans les controllers
-   ○ Dans le domain layer
-```
+### Décisions architecturales à prendre
+1. {Décision 1} - Impact: {élevé/moyen/faible}
+2. {Décision 2} - Impact: {élevé/moyen/faible}
 
-#### Si projet CLI :
-```
-Pour l'architecture de {nom} :
-
-1. Parsing des arguments : Quelle approche ?
-   ○ Library (System.CommandLine, yargs, click)
-   ○ Manuel simple
-   ○ Subcommands style git
-
-2. Configuration : Comment gérer les settings ?
-   ○ Fichier config (JSON, YAML, TOML)
-   ○ Variables d'environnement
-   ○ Arguments uniquement
-   ○ Mix des trois
-
-3. Output : Comment afficher les résultats ?
-   ○ JSON (machine-readable)
-   ○ Tables formatées
-   ○ Texte simple
-   ○ Interactif (prompts, progress bars)
-
-4. Erreurs : Comment les gérer ?
-   ○ Exit codes + stderr
-   ○ Exceptions avec stack trace (debug)
-   ○ Messages user-friendly
+### Points d'attention
+- {Risque ou complexité identifié}
+- {Contrainte à considérer}
 ```
 
-#### Si projet Desktop :
+### 4. Discussion interactive des décisions
+
+Pour chaque décision architecturale importante, engager une discussion :
+
+**Format de présentation d'une décision :**
 ```
-Pour l'architecture de {nom} :
+### Décision: {Aspect}
 
-1. UI Pattern : Quelle architecture ?
-   ○ MVVM
-   ○ MVC
-   ○ Component-based (si Blazor/Electron)
-   ○ Simple code-behind
+**Contexte:** {Pourquoi cette décision est nécessaire}
 
-2. Threading : Comment gérer le background work ?
-   ○ Async/await partout
-   ○ Background workers
-   ○ Thread pool manuel
-   ○ Pas de long-running tasks
+**Options:**
 
-3. Persistance locale : Comment sauvegarder ?
-   ○ SQLite
-   ○ Fichiers JSON/XML
-   ○ Settings natifs (Registry, plist)
-   ○ Pas de persistance
-```
+| Option | Description | Avantages | Inconvénients |
+|--------|-------------|-----------|---------------|
+| A | {description} | {pros} | {cons} |
+| B | {description} | {pros} | {cons} |
 
-#### Si projet avec contraintes performance :
-```
-J'ai noté des contraintes de performance. Quelques questions :
+**Ma recommandation:** {Option} parce que {raisonnement}
 
-1. Hot path : Quelles opérations sont critiques ?
-   [Champ texte]
+**Questions:**
+- {Question pour clarifier le contexte}
+- {Question sur les contraintes}
 
-2. Allocation : Faut-il éviter les allocations ?
-   ○ Oui, zero-alloc critique
-   ○ Minimiser seulement
-   ○ Pas de contrainte
-
-3. Threading : Modèle de concurrence ?
-   ○ Thread dédié haute priorité
-   ○ Thread pool standard
-   ○ Single-threaded
-   ○ Actor model
+Qu'est-ce qui te parle le plus ?
 ```
 
-### 3. Générer l'architecture
+**Types de décisions selon le projet :**
 
-Créer `docs/dev/architecture.md` adapté au projet :
+| Type de projet | Décisions typiques |
+|----------------|-------------------|
+| Web Frontend | State management, routing, styling, data fetching |
+| Backend/API | Pattern API, accès données, auth, validation |
+| CLI | Parsing args, config, output format, error handling |
+| Desktop | UI pattern, threading, persistance locale |
+| Library | API publique, extensibilité, versioning |
 
+**Règles de discussion :**
+- Présenter les **trade-offs** honnêtement
+- **Recommander** mais laisser le choix
+- **Creuser** les "pourquoi" derrière les préférences
+- **Challenger** si un choix semble sous-optimal pour le contexte
+- Documenter la **raison** du choix, pas juste le choix
+
+### 5. Synthèse des décisions
+
+```
+## Décisions architecturales retenues
+
+| Aspect | Choix | Raison |
+|--------|-------|--------|
+| {Aspect 1} | {Choix} | {Justification} |
+| {Aspect 2} | {Choix} | {Justification} |
+
+### Impact sur la structure
+[Comment ces choix affectent l'organisation du code]
+
+### À garder en tête
+- {Implication du choix 1}
+- {Implication du choix 2}
+
+Ça te convient ? Des ajustements ?
+```
+
+Attendre validation.
+
+### 6. Générer la documentation
+
+**`docs/dev/architecture.md` :**
 ```markdown
 # {Projet} - Architecture
 
-{Description courte}
+{Description du projet et de sa raison d'être}
 
-## Stack
+## Vue d'ensemble
 
-- **Runtime**: {stack détaillé}
-- **UI**: {si applicable}
-- **Data**: {stockage}
-- **Testing**: {framework}
+### Stack technique
+| Couche | Technologie | Rôle |
+|--------|-------------|------|
+| {Couche} | {Tech} | {Rôle} |
 
-## Architecture
+### Diagramme d'architecture
 
 ```
-{Diagramme ASCII adapté au projet}
-{Montrer les composants principaux et leurs relations}
+{Diagramme ASCII montrant les composants et leurs relations}
+{Adapter au type de projet - pas de diagramme générique}
 ```
 
 ## Composants
@@ -186,80 +169,154 @@ Créer `docs/dev/architecture.md` adapté au projet :
 |--------|-------------|
 | Rôle | {description} |
 | Responsabilités | {liste} |
+| Dépendances | {ce dont il dépend} |
+| Utilisé par | {ce qui l'utilise} |
 
-{Code exemple si pertinent}
+```{langage}
+// Exemple de code illustrant le pattern
+{code exemple}
+```
 
 ### {Composant 2}
 
 ...
 
-## Patterns
+## Patterns architecturaux
 
-### {Pattern principal choisi}
+### {Pattern principal}
 
-{Explication et exemple de code}
+**Pourquoi ce pattern:** {justification basée sur la discussion}
+
+**Comment l'appliquer:**
+```{langage}
+// Exemple concret
+{code}
+```
+
+### {Pattern secondaire si applicable}
+
+...
 
 ## Flux de données
 
-{Description du flux principal}
+### {Flux principal}
 
 ```
-{Diagramme de séquence ASCII si utile}
+{Diagramme de séquence ASCII}
+{Montrer comment les données circulent}
 ```
 
-## Structure Projet
+**Étapes:**
+1. {Étape 1}
+2. {Étape 2}
+...
+
+## Structure du projet
 
 ```
-src/
-├── {dossier}/     # {description}
-└── {dossier}/     # {description}
-
-tests/
-└── {structure}
+{racine}/
+├── {dossier}/          # {description et responsabilité}
+│   ├── {sous-dossier}/ # {description}
+│   └── {fichier}       # {description}
+├── {dossier}/          # {description}
+└── tests/
+    └── {structure des tests}
 ```
 
-## Configuration
+## Décisions architecturales (ADR)
 
-{Pattern de configuration utilisé}
+| # | Décision | Choix | Raison | Date |
+|---|----------|-------|--------|------|
+| 1 | {aspect} | {choix} | {justification} | {date} |
+| 2 | {aspect} | {choix} | {justification} | {date} |
 
-## Décisions clés
+## Contraintes et limites
 
-| Décision | Choix | Raison |
-|----------|-------|--------|
-| {aspect} | {choix} | {justification} |
+- **{Contrainte 1}:** {description et impact}
+- **{Contrainte 2}:** {description et impact}
+
+## Évolutions futures
+
+| Évolution | Quand | Impact |
+|-----------|-------|--------|
+| {évolution possible} | {trigger} | {ce qui changera} |
 ```
 
-### 4. Mettre à jour CLAUDE.md
+### 7. Mettre à jour CLAUDE.md
 
-Enrichir la section Architecture de `CLAUDE.md` avec :
+Enrichir la section Architecture avec :
 - Structure projet détaillée
-- Composants principaux
-- Patterns utilisés
+- Patterns à suivre
+- Décisions clés à respecter
 
-### 5. Afficher le résumé
+### 8. Créer les ADRs si nécessaire
+
+Pour les décisions importantes, créer `docs/dev/decisions/adr-{n}-{titre}.md` :
+
+```markdown
+# ADR-{N}: {Titre}
+
+## Statut
+Accepté
+
+## Contexte
+{Pourquoi cette décision était nécessaire}
+
+## Décision
+{Ce qui a été décidé}
+
+## Options considérées
+
+### Option A: {nom}
+- Avantages: {liste}
+- Inconvénients: {liste}
+
+### Option B: {nom}
+- Avantages: {liste}
+- Inconvénients: {liste}
+
+## Justification
+{Pourquoi cette option a été choisie}
+
+## Conséquences
+- {Implication 1}
+- {Implication 2}
+```
+
+### 9. Afficher le résumé
 
 ```
-## Architecture définie : {projet}
+## Architecture définie: {projet}
 
-**Composants principaux :**
-- {composant 1} - {rôle}
-- {composant 2} - {rôle}
-
-**Patterns :**
-- {pattern 1}
-- {pattern 2}
-
-**Fichiers créés/mis à jour :**
-- `docs/dev/architecture.md`
-- `CLAUDE.md` (section Architecture enrichie)
-
-**Prochaine étape :** `/tdd:init:3-standards`
+### Vue d'ensemble
+```
+{Diagramme ASCII simplifié}
 ```
 
-## Notes
+### Composants principaux
+- **{Composant 1}** - {rôle en 1 ligne}
+- **{Composant 2}** - {rôle en 1 ligne}
 
-- Les questions doivent être pertinentes au projet spécifique
-- Ne pas demander des choix déjà implicites dans le stack
-- Proposer des valeurs par défaut sensées
-- Le document doit être actionnable, pas théorique
-- Diagrammes ASCII > pas de diagramme > outils externes
+### Décisions clés
+| Décision | Choix |
+|----------|-------|
+| {Aspect 1} | {Choix} |
+| {Aspect 2} | {Choix} |
+
+### Fichiers créés/mis à jour
+- `docs/dev/architecture.md` - Architecture complète
+- `docs/dev/decisions/adr-*.md` - Décisions documentées (si applicable)
+- `CLAUDE.md` - Section Architecture enrichie
+
+### Prochaine étape
+`/tdd:init:3-standards` - Définir les conventions de code
+```
+
+## Adapter la profondeur
+
+| Projet simple | Projet complexe |
+|---------------|-----------------|
+| 1-2 décisions clés | 5+ décisions documentées |
+| Structure évidente | Discussion approfondie |
+| Pas d'ADR | ADRs pour décisions majeures |
+| Diagramme simple | Diagrammes multiples |

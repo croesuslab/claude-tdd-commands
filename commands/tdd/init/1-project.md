@@ -1,102 +1,189 @@
-# Commande: /tdd:init:1-project
+# /tdd:init:1-project
 
-Conversation exploratoire pour comprendre le projet, définir les epics et initialiser la structure TDD.
+Découverte interactive du projet pour définir la vision, les epics et initialiser la structure TDD.
 
 ## Instructions
 
-### 1. Vérifier si le projet existe déjà
+### 1. Vérifier l'état initial
 
 Vérifie si `docs/state.json` existe :
-- Si oui → demander confirmation avant de réinitialiser
-- Si non → continuer
+- **Si oui** → demander confirmation avant de réinitialiser
+- **Si non** → continuer
 
-### 2. Conversation de découverte
+### 2. Exploration silencieuse
 
-L'objectif est de comprendre le projet à travers une conversation naturelle. Poser des questions ouvertes et creuser selon les réponses.
+**Avant de parler, explorer :**
+- Structure du dossier actuel (fichiers existants)
+- `package.json`, `*.csproj`, `Cargo.toml`, etc. (indices sur le stack)
+- `README.md` existant (contexte du projet)
+- Fichiers de code existants (patterns, architecture émergente)
 
-**Démarrer avec :**
+**Identifier :**
+1. **Type de projet probable** - Web, CLI, API, library, desktop ?
+2. **Stack détecté** - Langage, framework, dépendances
+3. **État actuel** - Projet vierge, prototype existant, refactoring ?
+4. **Indices sur le domaine** - Noms de fichiers, variables, commentaires
+
+### 3. Présenter la compréhension initiale
+
 ```
+## Exploration initiale
+
+### Ce que j'ai détecté
+- **Dossier:** [vierge / contient du code / prototype]
+- **Stack apparent:** [langage/framework ou "non déterminé"]
+- **Indices:** [ce que les fichiers suggèrent]
+
+### Mon hypothèse
+[Ce que je pense que le projet pourrait être, basé sur les indices]
+
 Parle-moi de ton projet. Qu'est-ce que tu veux construire ?
 ```
 
-**Creuser selon la réponse.** Exemples de questions de suivi :
+### 4. Conversation de découverte
 
-| Si l'utilisateur mentionne... | Questions de suivi |
-|-------------------------------|-------------------|
-| Site web / App web | Frontend seul ou full-stack ? Quel framework ? SSR/SPA ? Auth requise ? |
-| API / Backend | REST ou GraphQL ? Quelles entités principales ? Base de données ? |
-| CLI | Quelles commandes ? Interactif ou batch ? Config file ? |
-| Desktop | Quelle plateforme ? UI native ou web-based ? |
-| Import/Export de fichiers | Quels formats ? Taille des fichiers ? Streaming nécessaire ? |
-| Base de données | SQL ou NoSQL ? Quelles entités ? Relations ? |
-| Temps réel | WebSocket ? Polling ? Quelle fréquence ? |
-| Hardware / IoT | Quels protocoles ? Latence critique ? |
+**Objectif :** Comprendre le projet à travers une conversation naturelle, pas un interrogatoire.
 
-**Questions essentielles à couvrir (adapter selon le contexte) :**
+**Écoute active :**
+| Si l'utilisateur mentionne... | Creuser sur... |
+|-------------------------------|----------------|
+| Un problème à résoudre | Qui a ce problème ? Quelle est la douleur actuelle ? |
+| Une technologie | Pourquoi ce choix ? Contrainte ou préférence ? |
+| Des utilisateurs | Qui sont-ils ? Quel est leur niveau technique ? |
+| Une fonctionnalité | Pourquoi celle-là en premier ? Qu'est-ce qui en dépend ? |
+| Une contrainte | D'où vient-elle ? Est-elle négociable ? |
 
-1. **But** : Quel problème ça résout ? Pour qui ?
-2. **Fonctionnalités clés** : Les 3-5 features principales ?
-3. **Stack préféré** : Langage/framework déjà choisi ou ouvert ?
-4. **Contraintes** : Performance, plateforme, intégrations externes ?
-5. **MVP** : Qu'est-ce qui est essentiel vs nice-to-have ?
+**Questions à couvrir (adapter au contexte) :**
 
-### 3. Synthétiser et proposer les epics
+| Catégorie | Questions clés |
+|-----------|----------------|
+| Vision | Quel problème ça résout ? Pour qui ? Pourquoi maintenant ? |
+| Scope | MVP vs vision complète ? Qu'est-ce qui est essentiel ? |
+| Technique | Stack préféré ou ouvert ? Contraintes d'intégration ? |
+| Contexte | Solo ou équipe ? Timeline ? Dépendances externes ? |
 
-Une fois le projet bien compris, proposer un découpage en epics :
+**Règles de conversation :**
+- Questions **ouvertes** (pas oui/non)
+- **Itérer** sur les réponses (creuser les "pourquoi")
+- **Challenger** les hypothèses ("tu mentionnes X, mais as-tu considéré Y ?")
+- **Reformuler** pour valider la compréhension
+- Adapter la **profondeur** au projet (simple → rapide, complexe → approfondi)
+
+### 5. Analyse silencieuse (après la conversation)
+
+Avant de proposer les epics, identifier :
+
+1. **Domaine** - Concepts clés, vocabulaire métier
+2. **Entités** - Objets principaux du système
+3. **Flux** - Comment les données/actions circulent
+4. **Risques** - Complexités techniques, dépendances externes, inconnues
+5. **Priorités** - Ce qui apporte le plus de valeur le plus tôt
+
+### 6. Présenter la synthèse
 
 ```
-## Récapitulatif
+## Synthèse: {Nom du projet}
 
-**Projet :** {nom} - {description courte}
-**Stack :** {langage/framework}
-**Type :** {web/cli/desktop/etc.}
+### Ce que j'ai compris
 
+**Vision:** [Résumé en 2-3 phrases]
+
+**Utilisateurs:** [Qui et pourquoi]
+
+**Problème résolu:** [La douleur adressée]
+
+### Domaine identifié
+
+| Concept | Description |
+|---------|-------------|
+| {Entité 1} | {Rôle dans le système} |
+| {Entité 2} | {Rôle dans le système} |
+
+### Points d'attention
+
+1. [Risque ou complexité identifiée]
+2. [Dépendance externe ou inconnue]
+3. [Décision architecturale à prendre]
+
+### Questions ouvertes
+
+[Questions restantes avant de définir les epics]
+```
+
+Attendre validation ou clarification.
+
+### 7. Proposer les epics
+
+```
 ## Epics proposés
 
-| Epic | Nom | Description | Tâches estimées |
-|------|-----|-------------|-----------------|
-| E0 | Foundation | {setup, modèles de base} | ~{n} |
-| E1 | {Feature 1} | {description} | ~{n} |
-| E2 | {Feature 2} | {description} | ~{n} |
-| ... | ... | ... | ... |
+### Stratégie de découpage
+[Expliquer le raisonnement derrière l'ordre et le découpage]
 
-**Ordre :** E0 → E1 → E2 → ...
+### Epics
 
-Ça te convient ? Tu veux ajuster quelque chose ?
+| Epic | Nom | Objectif | Valeur |
+|------|-----|----------|--------|
+| E0 | Foundation | {Setup, structure de base} | Fondation technique |
+| E1 | {Feature clé} | {Objectif} | {Valeur métier} |
+| E2 | {Feature 2} | {Objectif} | {Valeur métier} |
+
+**Ordre recommandé:** E0 → E1 → E2 → ...
+
+**Raisonnement:**
+- E0 d'abord car [raison]
+- E1 avant E2 car [raison]
+
+Des ajustements ? Un epic à diviser ou fusionner ?
 ```
 
-### 4. Détailler les epics
+### 8. Détailler chaque epic
 
-Pour chaque epic validé, demander les détails ou les proposer :
+Pour chaque epic validé :
 
 ```
-Pour l'epic "{Nom}", voici les tâches que je propose :
+## Détail: E{N} - {Nom}
 
-| # | Tâche | Description |
-|---|-------|-------------|
-| T1 | {titre} | {description} |
-| T2 | {titre} | {description} |
-| ... | ... | ... |
+### Objectif
+{Ce que l'epic accomplit}
 
-Des ajustements ?
+### Tâches proposées
+
+| # | Tâche | Description | Dépend de |
+|---|-------|-------------|-----------|
+| T1 | {titre} | {description} | - |
+| T2 | {titre} | {description} | T1 |
+
+### Critères de complétion
+- [ ] {Critère mesurable 1}
+- [ ] {Critère mesurable 2}
+
+### Risques spécifiques
+- {Risque identifié pour cet epic}
+
+Ça te convient ? Des tâches à ajouter/retirer ?
 ```
 
-### 5. Créer la structure
+Itérer jusqu'à validation.
+
+### 9. Créer la structure
 
 Une fois tout validé, créer :
 
 **Structure de dossiers :**
 ```bash
-mkdir -p docs/dev/api
-mkdir -p docs/dev/decisions
-mkdir -p docs/epics
-mkdir -p docs/user/guides
-mkdir -p docs/user/reference
+mkdir -p docs/dev/api docs/dev/decisions docs/epics docs/user/guides docs/user/reference
 ```
 
 **`docs/state.json` :**
 ```json
 {
+  "project": {
+    "name": "{nom}",
+    "description": "{description courte}",
+    "stack": "{stack}",
+    "type": "{web|cli|api|desktop|library}"
+  },
   "current": {
     "epic": "E0",
     "task": null,
@@ -109,43 +196,57 @@ mkdir -p docs/user/reference
 }
 ```
 
-**`docs/epics/e{n}-{nom}.md`** pour chaque epic :
+**`docs/epics/e{n}-{nom}.md`** pour chaque epic (format enrichi) :
 ```markdown
 # E{N}: {Nom}
 
-{Description}
+{Description complète}
 
 ## Objectif
 
-- {Objectif 1}
-- {Objectif 2}
+{Ce que cet epic accomplit et pourquoi}
+
+## Valeur
+
+{Quelle valeur ça apporte à l'utilisateur/projet}
 
 ## Tâches
 
-| # | Tâche | Description |
-|---|-------|-------------|
-| T1 | {Titre} | {Description} |
-| T2 | {Titre} | {Description} |
+| # | Tâche | Description | Dépend de |
+|---|-------|-------------|-----------|
+| T1 | {Titre} | {Description} | - |
+| T2 | {Titre} | {Description} | T1 |
 
 ## T1: {Titre}
 
-{Description détaillée}
+### Objectif
+{Ce que cette tâche accomplit}
 
-**À créer :**
+### Contexte
+{Pourquoi cette tâche, lien avec le reste}
+
+### À créer
 - {fichier/composant}
+
+### Critères de succès
+- [ ] {Critère mesurable}
 
 ## T2: {Titre}
 
-{Description détaillée}
+...
 
-## Critères de complétion
+## Critères de complétion de l'epic
 
-- [ ] Build OK
-- [ ] Tests OK
-- [ ] {Critère fonctionnel}
+- [ ] {Critère global 1}
+- [ ] {Critère global 2}
+
+## Risques
+
+- {Risque identifié}
+- {Mitigation possible}
 ```
 
-**`CLAUDE.md`** de base :
+**`CLAUDE.md`** :
 ```markdown
 # CLAUDE.md
 
@@ -153,7 +254,13 @@ This file provides guidance to Claude Code when working with this repository.
 
 ## Project Overview
 
-{Nom} - {Description complète basée sur la conversation}
+**{Nom}** - {Description complète basée sur la conversation}
+
+### Vision
+{Vision du projet en 2-3 phrases}
+
+### Utilisateurs
+{Qui utilise ce projet et pourquoi}
 
 ## Build & Test Commands
 
@@ -179,6 +286,12 @@ This file provides guidance to Claude Code when working with this repository.
 {structure selon le type de projet}
 ```
 
+### Key Concepts
+| Concept | Description |
+|---------|-------------|
+| {Entité 1} | {Rôle} |
+| {Entité 2} | {Rôle} |
+
 ## Development Flow (TDD)
 
 ```
@@ -192,7 +305,7 @@ This file provides guidance to Claude Code when working with this repository.
 See `docs/epics/` for details and `docs/state.json` for progress.
 ```
 
-**`CHANGELOG.md` :**
+**`CHANGELOG.md`** :
 ```markdown
 # Changelog
 
@@ -204,36 +317,44 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - Initial project setup
+- Project structure and TDD workflow
 ```
 
-### 6. Afficher le résumé
+### 10. Afficher le résumé
 
 ```
-## Projet initialisé : {nom}
+## Projet initialisé: {nom}
 
-**Stack :** {stack}
-**Epics :** {n} epics, {m} tâches total
+### Résumé
+- **Vision:** {vision en 1 ligne}
+- **Stack:** {stack}
+- **Epics:** {n} epics, {m} tâches total
 
-**Fichiers créés :**
-- `docs/state.json`
+### Fichiers créés
+- `docs/state.json` - État du projet
 - `docs/epics/e0-foundation.md`
 - `docs/epics/e1-{nom}.md`
 - ...
-- `CLAUDE.md`
-- `CHANGELOG.md`
+- `CLAUDE.md` - Guide pour Claude
+- `CHANGELOG.md` - Journal des changements
 
-**Prochaines étapes :**
+### Décisions capturées
+- {Décision clé 1}
+- {Décision clé 2}
+
+### Prochaines étapes
 1. `/tdd:init:2-architecture` - Définir l'architecture technique
 2. `/tdd:init:3-standards` - Définir les conventions de code
 3. `/tdd:init:4-readme` - Générer le README
 
-Ou sauter directement au dev : `/tdd:flow:1-analyze`
+Ou sauter directement : `/tdd:flow:1-analyze`
 ```
 
-## Notes
+## Adapter la profondeur
 
-- La conversation doit être naturelle, pas un interrogatoire
-- Adapter les questions au contexte (ne pas demander "SQL ou NoSQL" pour un CLI simple)
-- Proposer des choix quand l'utilisateur hésite
-- Les epics peuvent être ajustés plus tard
-- Privilégier la simplicité : moins d'epics bien définis > beaucoup d'epics vagues
+| Projet simple | Projet complexe |
+|---------------|-----------------|
+| 2-3 questions de découverte | Conversation approfondie |
+| 2-3 epics | 5+ epics détaillés |
+| Synthèse rapide | Analyse domaine complète |
+| Création immédiate | Validation itérative |

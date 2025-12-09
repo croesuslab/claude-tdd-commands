@@ -1,156 +1,174 @@
-# Commande: /tdd:init:3-standards
+# /tdd:init:3-standards
 
-Définir les conventions de code en se basant sur le stack du projet.
+Définition interactive des conventions de code basée sur le stack et les préférences de l'équipe.
 
 ## Instructions
 
-### 1. Charger le contexte (si disponible)
+### 1. Charger et analyser le contexte
 
-Vérifier et lire si présents :
+**Explorer silencieusement :**
 - `CLAUDE.md` - Stack technique, structure
 - `docs/dev/architecture.md` - Patterns choisis
+- `docs/state.json` - Type de projet
+- Code existant (si présent) - Conventions déjà utilisées
+- Fichiers de config (`.eslintrc`, `.editorconfig`, `rustfmt.toml`, etc.)
 
-**Si `CLAUDE.md` n'existe pas**, poser les questions de base :
-```
-Avant de définir les standards, j'ai besoin de quelques infos :
+**Identifier :**
+1. **Langage principal** et ses conventions idiomatiques
+2. **Framework** et ses conventions recommandées
+3. **Outils de lint/format** déjà configurés
+4. **Patterns existants** dans le code actuel
+5. **Incohérences** à résoudre
 
-1. Quel langage/stack ? (C#, TypeScript, Python, etc.)
-2. Quel framework de test ? (xUnit, Jest, pytest, etc.)
-```
+### 2. Analyse silencieuse
 
-Identifier ou collecter :
-- Langage principal (C#, TypeScript, Python, etc.)
-- Framework (si applicable)
-- Framework de test
+**Avant de parler, identifier :**
 
-### 2. Questions ciblées selon le stack
+1. **Conventions standard du langage**
+   - Qu'est-ce qui est "évident" et ne nécessite pas de discussion ?
+   - Qu'est-ce qui varie selon les équipes/projets ?
 
-**Adapter les questions au langage détecté.** Ne poser que les questions pertinentes.
+2. **Points de décision**
+   - Où y a-t-il plusieurs approches valides ?
+   - Qu'est-ce qui impacte la lisibilité/maintenabilité ?
 
-#### Questions communes (tous langages) :
+3. **Cohérence avec l'architecture**
+   - Les patterns architecturaux impliquent-ils des conventions spécifiques ?
+   - Comment nommer les composants de chaque couche ?
 
-```
-Quelques questions sur les conventions de {nom} :
+4. **Préférences détectées**
+   - Le code existant montre-t-il des préférences ?
+   - Les outils configurés imposent-ils des choix ?
 
-1. Documentation du code : Quel niveau ?
-   ○ Exhaustif (tout documenter)
-   ○ Standard (public API + logique complexe)
-   ○ Minimal (signatures évidentes = pas de doc)
-
-2. Langue des commentaires/docs ?
-   ○ Français
-   ○ Anglais
-
-3. Messages de commit : Quel format ?
-   ○ Conventional Commits (feat:, fix:, chore:)
-   ○ Epic/Task prefix (E1: T2 - description)
-   ○ Libre mais descriptif
-```
-
-#### Si C# / .NET :
+### 3. Présenter l'analyse
 
 ```
-Conventions C# spécifiques :
+## Analyse des conventions: {projet}
 
-1. Nullability : Comment gérer ?
-   ○ Strict (nullable enabled, pas de ! sauf exception)
-   ○ Pragmatique (! autorisé quand évident)
-   ○ Désactivé
+### Ce que j'ai détecté
+- **Langage:** {langage} ({version si pertinent})
+- **Framework:** {framework}
+- **Outils configurés:** {eslint, prettier, etc. ou "aucun"}
+- **Code existant:** {patterns observés ou "projet vierge"}
 
-2. Records vs Classes : Quelle règle ?
-   ○ Records pour data, Classes pour services
-   ○ Records partout sauf mutable state
-   ○ Classes partout
+### Conventions standard (pas besoin de discuter)
+{Liste des conventions évidentes du langage/framework}
 
-3. Async : Convention de nommage ?
-   ○ Suffixe Async obligatoire
-   ○ Suffixe Async sauf si évident (GetUser vs GetUserAsync)
-   ○ Pas de suffixe
+### Points à décider ensemble
+1. {Aspect où il y a plusieurs approches valides}
+2. {Aspect spécifique au projet}
+3. {Aspect lié aux tests}
 
-4. Collections : Initialisation ?
-   ○ Collection expressions (= [])
-   ○ new List<T>()
-   ○ Array.Empty<T>() pour immutable
+### Incohérences détectées (si applicable)
+- {Incohérence dans le code existant}
 ```
 
-#### Si TypeScript / JavaScript :
+### 4. Discussion interactive des conventions
 
+Pour chaque point de décision, engager une discussion :
+
+**Format de présentation :**
 ```
-Conventions TypeScript spécifiques :
+### Convention: {Aspect}
 
-1. Types : Quelle rigueur ?
-   ○ Strict (no any, no implicit any)
-   ○ Pragmatique (any autorisé en dernier recours)
-   ○ Loose
+**Contexte:** {Pourquoi c'est important pour ce projet}
 
-2. Imports : Quel ordre ?
-   ○ Auto (prettier/eslint organise)
-   ○ Manuel : externe → interne → relatif
-   ○ Pas de règle
+**Options courantes:**
 
-3. Fonctions : Quelle syntaxe préférer ?
-   ○ Arrow functions partout
-   ○ function pour exports, arrow pour callbacks
-   ○ Pas de préférence
+| Approche | Exemple | Avantages | Inconvénients |
+|----------|---------|-----------|---------------|
+| A | `{exemple}` | {pros} | {cons} |
+| B | `{exemple}` | {pros} | {cons} |
 
-4. Null handling : Quelle approche ?
-   ○ Strict null checks + optional chaining
-   ○ Assertions (!) autorisées
-   ○ Pas de null, undefined seulement
+**Ce que le code existant montre:** {observation ou "N/A"}
+
+**Ma recommandation:** {Option} parce que {raisonnement lié au projet}
+
+Quelle approche préfères-tu ? Y a-t-il des contraintes que je ne connais pas ?
 ```
 
-#### Si Python :
+**Points de discussion typiques par langage :**
 
+| Langage | Points de discussion |
+|---------|---------------------|
+| TypeScript | Strictness (any, null), imports, functions vs arrow, semicolons |
+| Python | Type hints level, docstrings format, imports organization |
+| C# | Nullability, records vs classes, async naming, collection init |
+| Rust | Error handling (Result vs panic), naming, module organization |
+| Go | Error handling, package naming, interface placement |
+
+**Points de discussion tests (tous langages) :**
 ```
-Conventions Python spécifiques :
+### Convention: Tests
 
-1. Type hints : Quelle rigueur ?
-   ○ Strict (mypy strict mode)
-   ○ Standard (public API typée)
-   ○ Minimal (pas de types)
+**Organisation des fichiers:**
+| Approche | Structure | Avantages |
+|----------|-----------|-----------|
+| Miroir | `tests/Module/ClassTests` | Facile à naviguer |
+| Par feature | `tests/features/` | Groupé par fonctionnalité |
+| Colocalisé | `*.test.ts` à côté | Proche du code |
 
-2. Docstrings : Quel format ?
-   ○ Google style
-   ○ NumPy style
-   ○ Sphinx/reST
-   ○ Pas de docstrings
+**Nommage des tests:**
+| Style | Exemple |
+|-------|---------|
+| Method_Scenario_Expected | `Save_ValidData_ReturnsTrue` |
+| should_when | `should_return_true_when_data_valid` |
+| Descriptif | `"saves valid data correctly"` |
 
-3. Imports : Organisation ?
-   ○ isort automatique
-   ○ Manuel : stdlib → third-party → local
-   ○ Pas de règle
+**Structure interne:**
+- AAA (Arrange/Act/Assert)
+- GWT (Given/When/Then)
+- Libre
 
-4. Classes : Quelle approche ?
-   ○ Dataclasses pour data
-   ○ Pydantic pour validation
-   ○ Classes standard
-```
-
-#### Questions sur les tests (tous langages) :
-
-```
-Conventions de tests :
-
-1. Organisation des fichiers de test ?
-   ○ Miroir de src/ (tests/Module/ClassTests)
-   ○ Par feature (tests/features/)
-   ○ Colocalisés avec le code (*.test.ts à côté)
-
-2. Nommage des tests ?
-   ○ Method_Scenario_Expected (Save_ValidData_ReturnsTrue)
-   ○ should_expected_when_scenario
-   ○ Description libre ("saves valid data")
-
-3. Structure interne des tests ?
-   ○ Arrange/Act/Assert (AAA)
-   ○ Given/When/Then
-   ○ Pas de structure imposée
+Qu'est-ce qui te parle ?
 ```
 
-### 3. Générer le document standards
+**Règles de discussion :**
+- **Ne pas discuter l'évident** (conventions standard du langage)
+- **Focus sur ce qui varie** entre projets/équipes
+- **Exemples concrets** plutôt que théorie
+- **Lier au contexte** du projet spécifique
+- **Pragmatisme** > pureté doctrinaire
 
-Créer `docs/dev/standards.md` adapté au stack :
+### 5. Synthèse des conventions
 
+```
+## Conventions retenues
+
+### Code
+| Aspect | Convention | Exemple |
+|--------|------------|---------|
+| {Aspect 1} | {Convention} | `{exemple}` |
+| {Aspect 2} | {Convention} | `{exemple}` |
+
+### Tests
+| Aspect | Convention |
+|--------|------------|
+| Organisation | {choix} |
+| Nommage | {pattern} |
+| Structure | {AAA/GWT/libre} |
+
+### Documentation
+| Aspect | Convention |
+|--------|------------|
+| Niveau | {exhaustif/standard/minimal} |
+| Langue | {français/anglais} |
+| Format | {style selon langage} |
+
+### Git
+| Aspect | Convention |
+|--------|------------|
+| Commits | {format} |
+| Branches | {pattern} |
+
+Ça te convient ? Des ajustements ?
+```
+
+Attendre validation.
+
+### 6. Générer la documentation
+
+**`docs/dev/standards.md` :**
 ```markdown
 # Standards de développement
 
@@ -158,128 +176,198 @@ Créer `docs/dev/standards.md` adapté au stack :
 
 Le projet suit une approche Test-Driven Development :
 
-1. **RED** : Écrire les tests d'abord (doivent échouer)
-2. **GREEN** : Implémenter le code minimal pour faire passer les tests
-3. **REFACTOR** : Améliorer le code en gardant les tests verts
+1. **RED** - Écrire les tests d'abord (doivent échouer)
+2. **GREEN** - Implémenter le code minimal pour passer les tests
+3. **REFACTOR** - Améliorer en gardant les tests verts
 
 ### Conventions de tests
 
-- Organisation : {structure choisie}
-- Nommage : `{convention choisie}`
-- Structure : {AAA/GWT/libre}
+| Aspect | Convention |
+|--------|------------|
+| Organisation | {structure choisie} |
+| Nommage | `{pattern choisi}` |
+| Structure | {AAA/GWT/libre} |
 
 ```{langage}
-// Exemple de test
-{exemple adapté au stack et conventions}
+// Exemple de test suivant les conventions
+{exemple concret adapté au stack}
 ```
 
-### Couverture
+### Couverture attendue
 
-- Chaque comportement public doit avoir un test
-- Tester les edge cases (null, vide, limites)
+- Chaque comportement public a un test
+- Edge cases couverts (null, vide, limites)
 - Pas de code sans test correspondant
 
 ## Conventions {Langage}
 
-### Fichiers et nommage
+### Nommage
 
-- Fichiers : {convention}
-- Types/Classes : {convention}
-- Fonctions/Méthodes : {convention}
-- Variables : {convention}
-- Constantes : {convention}
+| Élément | Convention | Exemple |
+|---------|------------|---------|
+| Fichiers | {convention} | `{exemple}` |
+| Classes/Types | {convention} | `{exemple}` |
+| Fonctions | {convention} | `{exemple}` |
+| Variables | {convention} | `{exemple}` |
+| Constantes | {convention} | `{exemple}` |
 
 ### Organisation du code
 
-{Conventions spécifiques au stack}
+```{langage}
+// Structure type d'un fichier
+{exemple montrant l'ordre des sections}
+```
+
+### {Aspect spécifique 1}
+
+**Convention:** {description}
+
+**Pourquoi:** {justification basée sur la discussion}
 
 ```{langage}
-// Exemple de structure de fichier
+// Bon
+{exemple correct}
+
+// À éviter
+{exemple incorrect}
+```
+
+### {Aspect spécifique 2}
+
+...
+
+## Documentation du code
+
+### Niveau
+
+{Description du niveau de documentation attendu}
+
+### Format
+
+```{langage}
+// Exemple de documentation selon le style choisi
 {exemple}
 ```
 
-### {Aspect spécifique au langage}
+### Quand documenter
 
-{Conventions basées sur les réponses}
-
-```{langage}
-// Exemple
-{code}
-```
-
-## Documentation
-
-- Niveau : {choix}
-- Langue : {choix}
-
-```{langage}
-// Exemple de documentation
-{exemple selon le style du langage}
-```
+- {Cas où la doc est requise}
+- {Cas où elle est optionnelle}
+- {Cas où elle est inutile}
 
 ## Conventions Git
 
-### Commits
+### Messages de commit
 
 ```
-{format choisi avec exemple}
+{format choisi avec exemple complet}
 ```
+
+**Types:** {si conventional commits}
+- `feat:` - Nouvelle fonctionnalité
+- `fix:` - Correction de bug
+- `refactor:` - Refactoring sans changement fonctionnel
+- `test:` - Ajout/modification de tests
+- `docs:` - Documentation
+- `chore:` - Maintenance
 
 ### Branches
 
-- Feature : `feature/{description}`
-- Fix : `fix/{description}`
-- Epic : `epic/{id}-{nom}` (si applicable)
+| Type | Pattern | Exemple |
+|------|---------|---------|
+| Feature | `feature/{description}` | `feature/user-auth` |
+| Fix | `fix/{description}` | `fix/login-error` |
+| Epic | `epic/{id}` | `epic/e1` |
 
-## Conventions fichiers projet
+## Structure des fichiers
 
-### Configuration
+### Code source
 
-{Conventions pour les fichiers config}
+```
+src/
+├── {convention pour ce dossier}
+└── {convention pour ce dossier}
+```
+
+### Tests
+
+```
+tests/
+├── {convention pour ce dossier}
+└── {convention pour ce dossier}
+```
 
 ### Documentation
 
-- Dev docs : `docs/dev/` (français)
-- User docs : `docs/user/` (anglais)
-- Epics : `docs/epics/e{n}-{nom}.md`
+| Type | Emplacement | Langue |
+|------|-------------|--------|
+| Dev docs | `docs/dev/` | {langue} |
+| User docs | `docs/user/` | {langue} |
+| API docs | `docs/dev/api/` | {langue} |
+
+## Outils
+
+### Linting/Formatting
+
+{Outils configurés et comment les utiliser}
+
+```bash
+# Vérifier
+{commande lint}
+
+# Formater
+{commande format}
 ```
 
-### 4. Mettre à jour CLAUDE.md
+### Pre-commit (si applicable)
 
-Ajouter une section "Conventions" dans `CLAUDE.md` avec les points clés :
+{Description des hooks configurés}
+```
+
+### 7. Mettre à jour CLAUDE.md
+
+Ajouter une section "Conventions" avec les points clés :
 - Règles de nommage
 - Patterns obligatoires
 - Ce qu'il faut éviter
 
-### 5. Afficher le résumé
+### 8. Configurer les outils (si souhaité)
+
+Proposer de créer/mettre à jour les fichiers de config :
+- `.editorconfig`
+- Config linter (`.eslintrc`, `pyproject.toml`, etc.)
+- Config formatter
+
+### 9. Afficher le résumé
 
 ```
-## Standards définis : {projet}
+## Standards définis: {projet}
 
-**Langage :** {langage}
+### Résumé
+- **Langage:** {langage}
+- **Tests:** {organisation} / {nommage} / {structure}
+- **Documentation:** {niveau} en {langue}
+- **Commits:** {format}
 
-**Tests :**
-- Structure : {organisation}
-- Nommage : {convention}
+### Conventions clés
+- {Convention importante 1}
+- {Convention importante 2}
+- {Convention importante 3}
 
-**Code :**
-- Documentation : {niveau}
-- {Aspect clé 1} : {choix}
-- {Aspect clé 2} : {choix}
+### Fichiers créés/mis à jour
+- `docs/dev/standards.md` - Conventions complètes
+- `CLAUDE.md` - Section Conventions ajoutée
+- {Fichiers de config si créés}
 
-**Git :**
-- Commits : {format}
-
-**Fichiers créés/mis à jour :**
-- `docs/dev/standards.md`
-- `CLAUDE.md` (section Conventions)
-
-**Prochaine étape :** `/tdd:init:4-readme`
+### Prochaine étape
+`/tdd:init:4-readme` - Générer le README
 ```
 
-## Notes
+## Adapter la profondeur
 
-- Ne pas répéter les conventions standard du langage (obvious stuff)
-- Focus sur les choix qui varient entre projets
-- Garder le document concis et actionnable
-- Les exemples doivent être cohérents avec le stack réel
+| Projet simple | Projet complexe |
+|---------------|-----------------|
+| Conventions standard du langage | Discussion approfondie |
+| Peu d'outils | Config complète lint/format |
+| Résumé rapide | Documentation détaillée |
+| Solo | Équipe (plus de formalisme) |

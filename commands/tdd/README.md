@@ -8,23 +8,38 @@ Commandes Claude Code pour le workflow Test-Driven Development.
 /init (natif) → /tdd:init:* → /tdd:flow:*
 ```
 
+## Philosophie
+
+Toutes les commandes suivent une approche **interactive et méthodique** :
+
+1. **Exploration silencieuse** - Analyser le contexte avant de parler
+2. **Présentation structurée** - Montrer ce qui a été compris
+3. **Discussion interactive** - Creuser avec des questions ouvertes
+4. **Synthèse et validation** - Confirmer avant d'agir
+5. **Adaptation** - Ajuster la profondeur selon la complexité
+
 ## Initialisation (`/tdd:init:*`)
 
-Commandes pour initialiser un nouveau projet TDD.
+Commandes pour initialiser un nouveau projet TDD avec une approche conversationnelle.
 
 | Commande | Description | Crée |
 |----------|-------------|------|
-| `/tdd:init:1-project` | Découverte du projet, définition des epics | `docs/state.json`, `docs/epics/*.md` |
-| `/tdd:init:2-architecture` | Architecture technique | `docs/dev/architecture.md` |
-| `/tdd:init:3-standards` | Conventions de code | `docs/dev/standards.md` |
-| `/tdd:init:4-readme` | README final | `README.md` |
+| `/tdd:init:1-project` | Découverte du projet, vision, epics | `docs/state.json`, `docs/epics/*.md`, `CLAUDE.md` |
+| `/tdd:init:2-architecture` | Architecture technique, composants, patterns | `docs/dev/architecture.md`, ADRs |
+| `/tdd:init:3-standards` | Conventions de code et tests | `docs/dev/standards.md` |
+| `/tdd:init:4-readme` | README final synthétisant le tout | `README.md` |
 
 **Flow recommandé :**
 ```
 /init → /tdd:init:1-project → /tdd:init:2-architecture → /tdd:init:3-standards → /tdd:init:4-readme
 ```
 
-Chaque commande est indépendante et pose les questions nécessaires si le contexte manque.
+Chaque commande :
+- Explore le contexte existant avant de poser des questions
+- Présente son analyse et sa compréhension
+- Engage une discussion pour clarifier et décider
+- Synthétise les décisions avant de créer les fichiers
+- S'adapte à la complexité du projet
 
 ## Flow TDD (`/tdd:flow:*`)
 
@@ -34,7 +49,7 @@ Commandes pour le cycle de développement TDD.
 |----------|-------|-------------|
 | `/tdd:flow:status` | - | Affiche l'état actuel (epic, tâche, phase, progression) |
 | `/tdd:flow:next` | - | Exécute automatiquement la prochaine étape |
-| `/tdd:flow:1-analyze` | Plan | Analyse la tâche, écrit specs dans `docs/current-task.md` |
+| `/tdd:flow:1-analyze` | Plan | Analyse la tâche, discussion interactive, specs |
 | `/tdd:flow:2-test` | RED | Écrit les tests (doivent compiler mais échouer) |
 | `/tdd:flow:3-dev` | GREEN | Implémente jusqu'à ce que tous les tests passent |
 | `/tdd:flow:4-review` | Validate | Vérifie standards, couverture, qualité |
@@ -64,6 +79,7 @@ docs/
 └── dev/
     ├── architecture.md
     ├── standards.md
+    ├── decisions/      # ADRs
     └── api/
 ```
 
@@ -71,6 +87,12 @@ docs/
 
 ```json
 {
+  "project": {
+    "name": "mon-projet",
+    "description": "Description courte",
+    "stack": "TypeScript/Node.js",
+    "type": "cli"
+  },
   "current": {
     "epic": "E1",
     "task": "T2",
@@ -83,34 +105,37 @@ docs/
 }
 ```
 
-## Quickfix (`/tdd:quickfix`)
+## Quickfix (`/tdd:flow:quickfix`)
 
 Pour les corrections rapides qui ne nécessitent pas le processus TDD complet.
 
 ```bash
 # Setup worktree (une seule fois)
-git worktree add ../spotlight-quickfix -b quickfix
+git worktree add ../projet-quickfix -b quickfix
 
 # Dans le worktree, lancer la commande
 /tdd:flow:quickfix "fix typo in error message"
 ```
-
-**Principe:** Une branche `quickfix` persistante qui accumule les commits. Une seule PR vers la branche courante (epic1, epic2, etc.).
 
 **Quand utiliser:**
 - Changements < 20 lignes
 - Corrections évidentes (typos, imports, null checks)
 - Pas de nouvelle fonctionnalité
 
-**Workflow:**
-- Fenêtre 1 (`spotlight`) → TDD normal
-- Fenêtre 2 (`spotlight-quickfix`) → `/tdd:quickfix`
-- Merger la PR quand prêt → `git pull` dans fenêtre 1
-
-Voir `/tdd:quickfix` pour les détails.
-
 ## Raccourcis
 
-- `/tdd:flow:status` - Où en suis-je ?
-- `/tdd:flow:next` - Continue automatiquement
-- `/tdd:flow:quickfix "desc"` - Correction rapide (worktree)
+| Commande | Description |
+|----------|-------------|
+| `/tdd:flow:status` | Où en suis-je ? |
+| `/tdd:flow:next` | Continue automatiquement |
+| `/tdd:flow:quickfix "desc"` | Correction rapide |
+
+## Principe d'interaction
+
+Toutes les commandes privilégient :
+
+- **Questions ouvertes** plutôt que oui/non
+- **Itération** sur les réponses
+- **Challenger** les hypothèses quand nécessaire
+- **Reformulation** pour valider la compréhension
+- **Adaptation** de la profondeur au contexte
